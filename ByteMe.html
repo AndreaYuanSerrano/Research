@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ByteMe</title>
+<style>
+*{
+    margin:0;padding:0;box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    scroll-behavior:smooth;
+    background:linear-gradient(135deg,#FF0099,#4900A0);
+    position:relative;
+}
+
+/* HAMBURGER BUTTON */
+.hamburger{
+    position:fixed;
+    top:15px;
+    left:15px;
+    font-size:28px;
+    cursor:pointer;
+    z-index:9999;
+    background:#FF0099;
+    color:#fff;
+    border-radius:8px;
+    padding:4px 8px;
+    border:3px solid #4900A0;
+    user-select:none;
+    box-shadow:2px 2px 0 0 #000;
+    transition:all 0.1s ease;
+}
+
+.hamburger:hover{
+    background:#E6008A;
+    box-shadow:4px 4px 0 0 #000;
+}
+
+.hamburger:active{
+    transform:translate(2px,2px);
+    box-shadow:0 0 0 0 #000;
+}
+
+/* SIDEBAR */
+.sidebar{
+    height:100%;
+    width:180px;
+    position:fixed;
+    top:0;
+    left:-200px;
+    background-color:#1a1a2e;
+    overflow-x:hidden;
+    transition:0.3s;
+    padding-top:60px;
+    box-shadow:4px 4px 0 0 #FF0099,8px 8px 0 0 #000;
+    z-index:1000;
+}
+
+.sidebar a{
+    padding:10px 16px;
+    text-decoration:none;
+    font-size:18px;
+    display:block;
+    color:#00bcd4;
+    transition:background-color 0.2s,color 0.2s;
+}
+
+.sidebar a:hover{
+    background-color:#4900A0;
+    color:#FF0099;
+}
+
+.sidebar a.active{
+    background-color:#00bcd4;
+    color:#1a1a2e;
+    font-weight:bold;}
+
+.sidebar.open{
+    left:0;
+}
+
+/* SECTIONS */
+.section{
+    display:none;
+    min-height:100vh;
+    padding:80px 20px 20px;
+    text-align:center;
+    color:#fff;
+}
+
+
+.section.active{
+    display:block;
+}
+
+/* PIXELATED BACKGROUND */
+.pixel-background{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:-1;
+}
+.pixel-background div{
+    position:absolute;
+    border-radius:2px;
+    background-color:rgba(255,255,255,0.1);
+    box-shadow:0 0 5px rgba(255,100,200,0.3);
+    animation:pixel-drift 15s linear infinite;
+}
+.pixel-background div:nth-child(1){
+    left:10%;top:10%;width:35px;height:35px;animation-duration:8s;background-color: rgba(255,182,217,0.2);}
+.pixel-background div:nth-child(2){left:25%;top:30%;width:50px;height:50px;animation-duration:11s;background-color: rgba(199,125,255,0.2);}
+.pixel-background div:nth-child(3){left:40%;top:50%;width:30px;height:30px;animation-duration:7s;background-color: rgba(255,255,255,0.15);}
+.pixel-background div:nth-child(4){left:55%;top:70%;width:60px;height:60px;animation-duration:12s;background-color: rgba(255,182,217,0.25);}
+.pixel-background div:nth-child(5){left:70%;top:90%;width:45px;height:45px;animation-duration:9s;background-color: rgba(199,125,255,0.25);}
+.pixel-background div:nth-child(6){left:85%;top:5%;width:25px;height:25px;animation-duration:6s;background-color: rgba(255,255,255,0.2);}
+.pixel-background div:nth-child(7){left:15%;top:25%;width:55px;height:55px;animation-duration:10s;background-color: rgba(255,182,217,0.3);}
+.pixel-background div:nth-child(8){left:65%;top:45%;width:40px;height:40px;animation-duration:9s;background-color: rgba(199,125,255,0.3);}
+.pixel-background div:nth-child(9){left:50%;top:65%;width:30px;height:30px;animation-duration:7s;background-color: rgba(255,255,255,0.1);}
+.pixel-background div:nth-child(10){left:80%;top:85%;width:50px;height:50px;animation-duration:11s;background-color: rgba(255,182,217,0.2);}
+@keyframes pixel-drift{0%{transform:translate(0,0) rotate(0deg);opacity:0;}5%{opacity:0.8;}95%{opacity:0.8;}100%{transform:translate(150px,-1000px) rotate(360deg);opacity:0;}}
+
+/* PIXEL TITLE & BUTTONS */
+.pixel-title{font-size:80px;color:#FF0099;margin-bottom:40px;text-shadow:2px 2px 0 #000,4px 4px 0 #000,6px 6px 0 #000,8px 8px 0 #000,10px 10px 0 #000,12px 12px 0 #000,-2px -2px 0 #00bcd4;}
+.pixel-button{padding:15px 30px;font-size:24px;font-weight:bold;cursor:pointer;outline:none;border-radius:4px;margin-bottom:20px;transition: all 0.1s ease;background-color:#00bcd4;color:#fff;border:3px solid #000;box-shadow:4px 4px 0 0 #00838f,8px 8px 0 0 #000;animation:pixel-float 1.5s ease-in-out infinite;}
+@keyframes pixel-float{0%{transform:translateY(0px) rotate(0deg);}55%{transform:translateY(-8px) rotate(1deg);}100%{transform:translateY(0px) rotate(0deg);}}
+.pixel-button:hover{background-color:#26c6da; transform:translate(-2px,-2px); box-shadow:6px 6px 0 0 #00838f,10px 10px 0 0 #000;}
+.pixel-button:active{transform:translate(8px,8px); box-shadow:0 0 0 0 #00838f;}
+
+/* LANGUAGE CARDS */
+.languages{display:none; gap:30px; justify-content:center; margin-top:10px;}
+.lang-card{background-color:#A044FF;width:130px;padding:15px 0;border-radius:4px;text-align:center;font-size:20px;font-weight:bold;cursor:pointer;color:#fff;border:3px solid #000;box-shadow:4px 4px 0 0 #6A0DAD,8px 8px 0 0 #000;transition: transform 0.1s ease, box-shadow 0.1s ease;animation: float 3s ease-in-out infinite;}
+@keyframes float{0%{transform:translateY(0px);}50%{transform:translateY(-8px);}100%{transform:translateY(0px);}}
+.lang-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 #6A0DAD,10px 10px 0 0 #000;}
+.lang-card:active{transform:translate(8px,8px);box-shadow:0 0 0 0 #6A0DAD;}
+.lang-card:nth-child(2){background-color:#38C222;box-shadow:4px 4px 0 0 #1B8C08,8px 8px 0 0 #000;}
+.lang-card:nth-child(2):hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 #1B8C08,10px 10px 0 0 #000;}
+.lang-card:nth-child(2):active{transform:translate(8px,8px);box-shadow:0 0 0 0 #1B8C08;}
+
+/* LESSONS & TRIVIA */
+.lesson-container{background-color: rgba(0,0,0,0.4); border:4px solid #00bcd4; padding:30px; border-radius:6px; box-shadow:0 0 0 4px #000,0 0 15px #FF0099,0 0 30px #00bcd4; max-width: 800px; margin: 0 auto;}
+.lesson-header{font-size:36px;color:#FF0099;text-shadow:2px 2px #000, 4px 4px #4900A0;margin-bottom:25px;}
+.lesson-content p{font-size:20px; line-height:1.6; margin-bottom:20px;}
+.code-block{background-color:#000;border:2px solid #38C222;padding:15px;margin:20px auto;width:80%;max-width:600px;text-align:left;font-family:'Courier New', monospace; box-shadow:4px 4px 0 0 #38C222;border-radius:2px;}
+.code-block .code-line{color:#FFFF00;display:block;}
+.lesson-footer{font-size:18px;color:#00bcd4;margin-top:20px;border-top:1px solid rgba(255,255,255,0.2);padding-top:15px;}
+
+/* BACK BUTTON */
+.back-home{margin-top:30px;padding:12px 25px;font-size:20px;font-weight:bold;background-color:#FF0099;color:#fff;border:3px solid #000;cursor:pointer;box-shadow:4px 4px 0 0 #4900A0,8px 8px 0 0 #000;transition:all 0.1s ease;}
+.back-home:hover{background-color:#E6008A; transform:translate(-2px,-2px); box-shadow:6px 6px 0 0 #4900A0,10px 10px 0 0 #000;}
+.back-home:active{transform:translate(6px,6px); box-shadow:0 0 0 0 #000;}
+
+/* TRIVIA CARD */
+.trivia-card{max-width:700px;margin:40px auto;padding:30px;background:rgba(0,0,0,0.45);border-radius:6px;border:4px solid #00bcd4;box-shadow:0 0 0 4px #000,0 0 20px #FF0099,0 0 40px #00bcd4;transition:0.4s ease;}
+.trivia-card:hover{transform:translate(-4px,-4px) rotate(1deg);box-shadow:4px 4px 0 #000,0 0 25px #FF0099,0 0 50px #00bcd4;}
+.trivia-card h2{color:#FF0099;font-size:32px;margin-bottom:15px;text-shadow:2px 2px #000,4px 4px #4900A0;}
+.trivia-card p{font-size:20px; line-height:1.6; color:#fff;}
+#nextBtn{margin-top:35px;padding:15px 30px;font-size:22px;font-weight:bold;background-color:#00bcd4;color:#fff;border:3px solid #000;cursor:pointer;box-shadow:4px 4px 0 0 #00838f,8px 8px 0 0 #000;transition:all 0.1s ease;}
+#nextBtn:hover{background-color:#26c6da; transform:translate(-3px,-3px); box-shadow:6px 6px 0 0 #00838f,10px 10px 0 0 #000;}
+#nextBtn:active{transform:translate(6px,6px); box-shadow:0 0 0 0 #00838f;}
+
+/* JAVA LESSON MENU STYLES */
+#java-lessons-menu .lesson-container{
+    max-width: 900px;
+}
+.lesson-list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+}
+.lesson-list-item{
+    flex: 0 0 45%; /* Two items per row on wider screens */
+    max-width: 45%;
+    text-align: center;
+}
+.lesson-link{
+    display: block;
+    padding: 15px 10px;
+    background-color: #A044FF;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 0 #6A0DAD, 8px 8px 0 0 #000;
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+.lesson-link:hover{
+    background-color: #B257FF;
+    transform:translate(-2px,-2px);
+    box-shadow: 6px 6px 0 0 #6A0DAD, 10px 10px 0 0 #000;
+}
+.lesson-link:active{
+    transform:translate(8px,8px);
+    box-shadow:0 0 0 0 #6A0DAD;
+}
+@media (max-width: 600px) {
+    .lesson-list-item {
+        flex: 0 0 90%; /* One item per row on small screens */
+        max-width: 90%;
+    }
+}
+
+/* JAVA LESSON CONTENT STYLES */
+.lesson-content h3 {
+    color: #00bcd4;
+    text-shadow: 1px 1px #000;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+/* --- BYTE CHARACTER AND DIALOGUE STYLES --- */
+#guide-char {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px; /* Character area width */
+    height: 150px; /* Character area height */
+    z-index: 9990;
+    pointer-events: none; /* Allows clicks to pass through */
+}
+
+#char-box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    /* --- UPDATED CHARACTER: Retro Robot (16x16 SVG) --- */
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect fill="%2300BCD4" x="4" y="3" width="8" height="2"/><rect fill="%234900A0" x="3" y="5" width="10" height="7"/><rect fill="%23FF0099" x="5" y="6" width="2" height="2"/><rect fill="%23FF0099" x="9" y="6" width="2" height="2"/><rect fill="%2300BCD4" x="5" y="9" width="6" height="1"/><rect fill="%234900A0" x="5" y="12" width="2" height="2"/><rect fill="%234900A0" x="9" y="12" width="2" height="2"/></svg>') no-repeat center center;
+    background-size: 100%;
+    animation: char-float 2s ease-in-out infinite alternate;
+    border: 3px solid #000;
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 0 #4900A0;
+    /* Ensure image is pixelated if possible, though SVG makes it sharp */
+    image-rendering: pixelated; 
+    image-rendering: -moz-crisp-edges;
+}
+@keyframes char-float{
+    0%{transform:translateY(0px);}
+    100%{transform:translateY(-5px);}
+}
+
+#dialogue-box {
+    position: absolute;
+    bottom: 70px;
+    right: 50px;
+    max-width: 250px;
+    padding: 10px;
+    background-color: #fff;
+    color: #1a1a2e;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px 8px 0 8px; /* Speech bubble effect */
+    border: 4px solid #000;
+    box-shadow: 4px 4px 0 0 #FF0099;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+    transform: scale(0.9);
+    text-align: left;
+    line-height: 1.4;
+    pointer-events: auto; /* Make dialogue clickable to dismiss */
+    cursor: pointer;
+}
+
+#dialogue-box.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+/* Triangle "tail" for the speech bubble */
+#dialogue-box::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: -14px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-left-color: #000;
+    border-top-color: #000;
+    transform: rotate(45deg);
+}
+
+/* CONTACT CARDS */
+        .contact-card {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px 30px;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 8px;
+            border: 4px solid #00bcd4;
+            box-shadow: 0 0 0 4px #000, 0 0 20px #FF0099, 0 0 40px #00bcd4;
+            transition: 0.4s ease;
+            text-align: center;
+        }
+
+        .contact-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .member {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 6px;
+            border: 3px solid #FF0099;
+            box-shadow: 0 0 10px #000;
+            transition: 0.3s ease;
+        }
+
+        .member:hover {
+            transform: scale(1.06);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .member h3 {
+            color: #00bcd4;
+            margin-bottom: 15px;
+        }
+
+        .member-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .member-links a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            padding: 10px 12px;
+            background: #00bcd4;
+            border-radius: 6px;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0 #00838f, 6px 6px 0 #000;
+            transition: all 0.2s ease;
+        }
+
+        .member-links a:hover {
+            background: #26c6da;
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0 0 #00838f, 8px 8px 0 0 #000;
+        }
+
+        .member-links a:active {
+            transform: translate(6px, 6px);
+            box-shadow: 0 0 0 0 #000;
+        }
+
+        .back-home {
+            margin-top: 40px;
+            padding: 12px 25px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #FF0099;
+            color: #fff;
+            border: 3px solid #000;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 0 #4900A0, 8px 8px 0 0 #000;
+            transition: all 0.1s ease;
+        }
+
+        .back-home:hover {
+            background-color: #E6008A;
+            transform: translate(-2px, -2px);
+        }
+
+        .back-home:active {
+            transform: translate(6px, 6px);
+            box-shadow: 0 0 0 0 #000;
+        }
+</style>
+</head>
+<body onload="byteSpeak('Welcome to ByteMe! Click the ☰ menu or the **Language** button to start learning.')">
+
+<div class="hamburger" onclick="toggleSidebar()">☰</div>
+
+<div id="sidebar" class="sidebar">
+    <a class="active" href="#" onclick="showSection('home', event)">Home</a>
+    <a href="#" onclick="showSection('lessons', event)">Lessons</a>
+    <a href="#" onclick="showSection('trivia', event)">Trivias</a>
+     <a href="#" onclick="showSection('contact', event)">Contact</a>
+</div>
+
+<div class="pixel-background">
+    <div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div><div></div>
+</div>
+
+<div id="home" class="section active">
+    <h1 class="pixel-title">ByteMe.</h1>
+    <button class="pixel-button" onclick="toggleLanguages()">Language</button>
+    <div class="languages" id="languages">
+        <div class="lang-card" onclick="playSelectSound('java')">Java</div> 
+        <div class="lang-card" onclick="playSelectSound('html')">HTML</div> 
+    </div>
+</div>
+
+<div id="java-lessons-menu" class="section">
+    <div class="lesson-container">
+        <h2 class="lesson-header"> Java Modules: Select a Lesson </h2>
+        <ul class="lesson-list">
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Compiler')">Compiler & Compilation</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Variables')">Variables & Data Types</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Operators-Arithmetic')">Arithmetic Operators</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Operators-Unary')">Unary Operators</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Operators-Relational')">Relational Operators</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Operators-Ternary')">Ternary Operator</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Operators-Assignment')">Assignment Operators</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('IfStatement')">If Statement</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('IfElseStatement')">If-Then-Else Statement</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('SwitchStatement')">Switch Statement</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('ForLoop')">For Loop</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('WhileDoWhile')">While/Do-While Loops</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Arrays')">Types of Arrays</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('ForEachArray')">Array & For-Each Loop</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('MultiArray')">Multidimensional Array</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Keywords')">Java Keywords</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Scanner')">Scanner Class</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('TypeCasting')">Type Casting</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('OOP')">Object-Oriented Programming (OOP)</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('AccessModifier')">Access Modifiers</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Abstract')">Abstract Classes</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('Arguments')">Arguments & Parameters</a></li>
+            <li class="lesson-list-item"><a class="lesson-link" onclick="loadLesson('UpcastingDowncasting')">OOP (Upcasting & Downcasting)</a></li>
+        </ul>
+        <button class="back-home" onclick="showSection('home', event)">⬅ Back to Home</button>
+    </div>
+</div>
+
+<div id="lessons" class="section">
+    <div class="lesson-container">
+        <h2 class="lesson-header" id="lesson-title">Welcome to Java Lessons!</h2>
+        <div class="lesson-content" id="lesson-content">
+            <p>Select a topic from the Java Modules menu to start your coding adventure. Knowledge is power!</p>
+            <div class="code-block">
+                <span class="code-line">public class ByteMe {</span><br>
+                <span class="code-line">    public static void main(String[] args) {</span><br>
+                <span class="code-line">        System.out.println("Ready to learn!");</span><br>
+                <span class="code-line">    }</span><br>
+                <span class="code-line">}</span>
+            </div>
+        </div>
+        <p class="lesson-footer" id="lesson-footer">Learn to code, change the world.</p>
+        <button class="back-home" onclick="showSection('java-lessons-menu', event)">⬅ Back to Java Menu</button>
+    </div>
+</div>
+
+<div id="trivia" class="section">
+    <h1 class="pixel-title">Trivia</h1>
+    <div class="trivia-card" id="fact-card">
+    
+
+        <h2 id="fact-title">Welcome!</h2>
+        <p id="fact-text">Click "Reveal Another!" to start learning programming trivia!</p>
+    </div>
+    <button id="nextBtn">Reveal Another!</button>
+    <br>
+    <button class="back-home" onclick="showSection('home', event)">⬅ Back to Home</button>
+</div>
+
+<div id="guide-char">
+    <div id="dialogue-box" onclick="this.classList.remove('active')"></div>
+    <div id="char-box"></div>
+</div>
+
+<div id="contact" class="section active">
+        <h1 class="pixel-title">Contact Us</h1>
+
+        <div class="contact-card">
+            <h2 style="color:#FF0099;">Meet the Developers</h2>
+
+            <div class="team-grid">
+                <div class="member">
+                    <h3>Ellaine Garcia</h3>
+                    <div class="member-links">
+                        <a href="ellaine.dev@example.com">📧 Email</a>
+                        <a href="https://instagram.com/ellaine.dev" target="_blank">📸 Instagram</a>
+                        <a href="https://facebook.com/ellaine.dev" target="_blank">📘 Facebook</a>
+                    </div>
+                </div>
+
+                <div class="member">
+                    <h3>Rose Guevarra</h3>
+                    <div class="member-links">
+                        <a href="rosemarieguevarra083@gmail.com ">📧 Email</a>
+                        <a href="https://www.instagram.com/akxmiea?igsh=MWxmb2t3d2JjZmdhdw==" target="_blank">📸 Instagram</a>
+                        <a href="https://www.facebook.com/rose.guevarra.270184" target="_blank">📘 Facebook</a>
+                    </div>
+                </div>
+
+                <div class="member">
+                    <h3>Andrea Yuan Serrano</h3>
+                    <div class="member-links">
+                        <a href="andreayuanserrano@gmail.com">📧 Email</a>
+                        <a href="https://www.instagram.com/broke_noodle13?igsh=czF4OXhvOXpoaHBi" target="_blank">📸 Instagram</a>
+                        <a href="https://facebook.com/andrea.codes" target="_blank">📘 Facebook</a>
+                    </div>
+                </div>
+
+                <div class="member">
+                    <h3>Clarissa Dinaldo</h3>
+                    <div class="member-links">
+                        <a href="navaretteclarissa38@gmail.com">📧 Email</a>
+                        <a href="https://www.facebook.com/share/1FuPukLoiq/" target="_blank">📘 Facebook</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-home" onclick="location.href='byteme.html'">⬅ Back to Home</button>
+    </div>
+
+<script>
+// --- BYTE CHARACTER GUIDANCE FUNCTIONS ---
+const dialogueBox = document.getElementById('dialogue-box');
+
+// Function to make Byte 'speak'
+function byteSpeak(message) {
+    dialogueBox.textContent = message;
+    dialogueBox.classList.add('active');
+    
+    // Auto-hide the message after 6 seconds
+    clearTimeout(dialogueBox.timer);
+    dialogueBox.timer = setTimeout(() => {
+        dialogueBox.classList.remove('active');
+    }, 6000);
+}
+
+// --- CORE NAVIGATION FUNCTIONS ---
+function toggleSidebar(){ 
+    document.getElementById('sidebar').classList.toggle('open'); 
+}
+
+function showSection(id, event){
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+    if(event && event.target.tagName==='A' && event.target.closest('.sidebar')) {
+        event.target.classList.add('active');
+    }
+
+    // Guide Messages based on section
+    if (id === 'home') {
+        byteSpeak("Let's pick a language! Click the **Language** button below.");
+    } else if (id === 'lessons') {
+        // If we landed on the default 'lessons' section, guide back to the menu.
+        if (document.getElementById('lesson-title').textContent.includes("Welcome")) {
+             byteSpeak("Great choice! Click the **Back to Java Menu** button to see the topics.");
+        }
+    } else if (id === 'trivia') {
+        byteSpeak("Time for Trivia! Click **Reveal Another!** to test your knowledge.");
+    } else if (id === 'java-lessons-menu') {
+        byteSpeak("Welcome to the Java Modules! Pick a lesson to jump into the code.");
+    }
+}
+
+function toggleLanguages(){
+    const langs=document.getElementById('languages');
+    const isVisible = langs.style.display === 'flex';
+    langs.style.display = isVisible ? 'none':'flex';
+    
+    if (!isVisible) {
+        byteSpeak("Select **Java** to check out the current lessons!");
+    }
+}
+
+function playSelectSound(lang){ 
+    document.getElementById('languages').style.display='none'; 
+    if(lang === 'java') {
+        showSection('java-lessons-menu');
+    } else {
+        document.getElementById('lesson-title').textContent = "HTML Lessons (Coming Soon!)";
+        document.getElementById('lesson-content').innerHTML = "<p>The HTML modules are currently under construction. Please check back later!</p>";
+        document.getElementById('lesson-footer').textContent = "Patience, young coder.";
+        showSection('lessons');
+    }
+}
+
+// --- JAVA LESSON DATA ---
+const javaLessons = {
+    'Compiler': {
+        title: " Java Compiler: What's Happening?",
+        content: `
+            <p>The Java Compiler (<strong>javac</strong>) is like a translator. It takes your human-readable Java code (<strong>.java</strong> file) and converts it into platform-independent <strong>Bytecode</strong> (<strong>.class</strong> file).</p>
+            <p>This Bytecode isn't run directly by your operating system, but by the <strong>Java Virtual Machine (JVM)</strong>. This is why Java is famous for its slogan: "Write once, run anywhere!"</p>
+            <h3>Compiling a Program</h3>
+            <div class="code-block">
+                <span class="code-line">// 1. Write your Java source file (Example.java)</span>
+                <span class="code-line">public class Example {</span>
+                <span class="code-line">    public static void main(String[] args) {</span>
+                <span class="code-line">        System.out.println("Compiling is cool!");</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+                <span class="code-line"></span>
+                <span class="code-line">// 2. Compile it in your terminal:</span>
+                <span class="code-line">> javac Example.java</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Result: Example.class file is created.</span>
+                <span class="code-line"></span>
+                <span class="code-line">// 3. Run the Bytecode using the JVM:</span>
+                <span class="code-line">> java Example</span>
+                <span class="code-line">// Output: Compiling is cool!</span>
+            </div>
+        `,
+        footer: "Next: Variables and Data Types"
+    },
+    'Variables': {
+        title: " Variables and Data Types: Storing Data",
+        content: `
+            <p>A <strong>Variable</strong> is a container that holds a value. Every variable must have a <strong>Data Type</strong> which dictates what kind of data it can hold (number, text, boolean).</p>
+            <h3>Primitive Data Types in Java</h3>
+            <ul>
+                <li><strong>int:</strong> Whole numbers (e.g., 10, -500).</li>
+                <li><strong>double:</strong> Decimal numbers (e.g., 3.14, 0.001).</li>
+                <li><strong>char:</strong> Single characters (e.g., 'A', 'z', '5').</li>
+                <li><strong>boolean:</strong> True or False values (e.g., true, false).</li>
+            </ul>
+            <h3>Declaration and Initialization</h3>
+            <div class="code-block">
+                <span class="code-line">int score = 100;</span>
+                <span class="code-line">double pi = 3.14159;</span>
+                <span class="code-line">char grade = 'A';</span>
+                <span class="code-line">boolean isAlive = true;</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Note: String (for text) is an Object, not a primitive!</span>
+                <span class="code-line">String name = "ByteMe";</span>
+            </div>
+        `,
+        footer: "Next: Java Arithmetic Operators"
+    },
+    'Operators-Arithmetic': {
+        title: " Java Arithmetic Operators",
+        content: `
+            <p>Arithmetic Operators perform basic mathematical operations. You use them all the time!</p>
+            <h3>The Five Main Operators</h3>
+            <ul>
+                <li><strong>+</strong> (Addition)</li>
+                <li><strong>-</strong> (Subtraction)</li>
+                <li><strong>*</strong> (Multiplication)</li>
+                <li><strong>/</strong> (Division)</li>
+                <li><strong>%</strong> (Modulus/Remainder) - Finds the remainder of a division.</li>
+            </ul>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">int a = 10;</span>
+                <span class="code-line">int b = 3;</span>
+                <span class="code-line"></span>
+                <span class="code-line">int sum = a + b; // 13</span>
+                <span class="code-line">int product = a * b; // 30</span>
+                <span class="code-line">int quotient = a / b; // 3 (Integer division drops the decimal!)</span>
+                <span class="code-line">int remainder = a % b; // 1 (10 / 3 leaves a remainder of 1)</span>
+            </div>
+        `,
+        footer: "Next: Unary Operators"
+    },
+    'Operators-Unary': {
+        title: " Unary Operators: Quick Changes",
+        content: `
+            <p>Unary operators require only **one** operand. They are often used for quick incrementing/decrementing or changing a sign.</p>
+            <h3>Unary Operator Types</h3>
+            <ul>
+                <li><strong>++</strong> (Increment): Increases the value by 1.</li>
+                <li><strong>--</strong> (Decrement): Decreases the value by 1.</li>
+                <li><strong>+</strong> (Unary Plus): Does nothing, just a positive sign.</li>
+                <li><strong>-</strong> (Unary Minus): Negates the value.</li>
+                <li><strong>!</strong> (Logical NOT): Flips a boolean value (true becomes false, and vice versa).</li>
+            </ul>
+            <h3>Postfix vs. Prefix Increment</h3>
+            <p>The position of the <code>++</code> matters!</p>
+            <div class="code-block">
+                <span class="code-line">int x = 5;</span>
+                <span class="code-line">int y = ++x; // Prefix: x is incremented FIRST (x=6), then assigned to y (y=6)</span>
+                <span class="code-line"></span>
+                <span class="code-line">int a = 5;</span>
+                <span class="code-line">int b = a++; // Postfix: a is assigned to b FIRST (b=5), then incremented (a=6)</span>
+                <span class="code-line"></span>
+                <span class="code-line">boolean isSunny = true;</span>
+                <span class="code-line">boolean isCloudy = !isSunny; // isCloudy is false</span>
+            </div>
+        `,
+        footer: "Next: Relational Operators"
+    },
+    'Operators-Relational': {
+        title: " Relational Operators: Comparisons",
+        content: `
+            <p>Relational operators are used to compare two values. They **always** return a **boolean** result (<code>true</code> or <code>false</code>).</p>
+            <h3>Comparison Operators</h3>
+            <ul>
+                <li><strong>==</strong> (Equal to)</li>
+                <li><strong>!=</strong> (Not equal to)</li>
+                <li><strong>></strong> (Greater than)</li>
+                <li><strong><</strong> (Less than)</li>
+                <li><strong>>=</strong> (Greater than or equal to)</li>
+                <li><strong><=</strong> (Less than or equal to)</li>
+            </ul>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">int age = 18;</span>
+                <span class="code-line">boolean check1 = (age == 18); // true</span>
+                <span class="code-line">boolean check2 = (age < 21); // true</span>
+                <span class="code-line">boolean check3 = (age != 10); // true</span>
+                <span class="code-line">boolean check4 = (age > 20); // false</span>
+            </div>
+            <p><strong> Caution:</strong> Do not confuse the equality operator (<code>==</code>) with the assignment operator (<code>=</code>)!</p>
+        `,
+        footer: "Next: Ternary Operators"
+    },
+    'Operators-Ternary': {
+        title: " Ternary Operator: A Shortcut If-Else",
+        content: `
+            <p>The Ternary Operator is a shortcut for a simple <code>if-then-else</code> statement. It is the only operator in Java that takes **three** operands.</p>
+            <p><strong>Syntax:</strong> <code>variable = (condition) ? value_if_true : value_if_false;</code></p>
+            <h3>Code Example: Full If-Else vs. Ternary</h3>
+            <div class="code-block">
+                <span class="code-line">int score = 75;</span>
+                <span class="code-line">String result;</span>
+                <span class="code-line"></span>
+                <span class="code-line">// The Traditional Way:</span>
+                <span class="code-line">if (score >= 70) {</span>
+                <span class="code-line">    result = "Passed";</span>
+                <span class="code-line">} else {</span>
+                <span class="code-line">    result = "Failed";</span>
+                <span class="code-line">}</span>
+                <span class="code-line"></span>
+                <span class="code-line">// The Ternary Way:</span>
+                <span class="code-line">result = (score >= 70) ? "Passed" : "Failed";</span>
+                <span class="code-line">// result is now "Passed"</span>
+            </div>
+        `,
+        footer: "Next: If Statement in Java"
+    },
+    'IfStatement': {
+        title: " If Statement: Making Decisions",
+        content: `
+            <p>The <strong>If Statement</strong> allows your program to execute a block of code only if a specified condition is <code>true</code>. It's the foundation of decision-making in code!</p>
+            <h3>Syntax</h3>
+            <div class="code-block">
+                <span class="code-line">if (condition) {</span>
+                <span class="code-line">    // code to execute IF condition is true</span>
+                <span class="code-line">}</span>
+            </div>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">int temperature = 25;</span>
+                <span class="code-line">if (temperature > 30) {</span>
+                <span class="code-line">    System.out.println("It's a hot day!");</span>
+                <span class="code-line">}</span>
+                <span class="code-line">System.out.println("Always runs.");</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Output: Always runs. (Since 25 is not > 30)</span>
+            </div>
+        `,
+        footer: "Next: If-Then-Else Statement"
+    },
+    'IfElseStatement': {
+        title: " If-Then-Else: Handling Alternatives",
+        content: `
+            <p>The <strong>If-Then-Else Statement</strong> provides an alternative path. If the initial <code>if</code> condition is <code>false</code>, the code inside the <code>else</code> block is executed.</p>
+            <h3>Syntax</h3>
+            <div class="code-block">
+                <span class="code-line">if (condition) {</span>
+                <span class="code-line">    // code to execute if true</span>
+                <span class="code-line">} else {</span>
+                <span class="code-line">    // code to execute if false</span>
+                <span class="code-line">}</span>
+            </div>
+            <h3>Code Example (Voting Eligibility)</h3>
+            <div class="code-block">
+                <span class="code-line">int age = 16;</span>
+                <span class="code-line">if (age >= 18) {</span>
+                <span class="code-line">    System.out.println("You can vote!");</span>
+                <span class="code-line">} else {</span>
+                <span class="code-line">    System.out.println("Wait a few more years.");</span>
+                <span class="code-line">}</span>
+                <span class="code-line">// Output: Wait a few more years.</span>
+            </div>
+        `,
+        footer: "Next: Switch Statement"
+    },
+    'SwitchStatement': {
+        title: " Switch Statement: Multiple Choices",
+        content: `
+            <p>The <strong>Switch Statement</strong> is an alternative to a long chain of <code>if-else if-else</code> statements when testing a single variable against multiple fixed values.</p>
+            <h3>How it Works</h3>
+            <p>The variable (the *expression*) is checked against each *case* value. Once a match is found, the code block for that case is executed until a <code>break;</code> statement is encountered.</p>
+            <div class="code-block">
+                <span class="code-line">char grade = 'B';</span>
+                <span class="code-line">switch (grade) {</span>
+                <span class="code-line">    case 'A':</span>
+                <span class="code-line">        System.out.println("Excellent!");</span>
+                <span class="code-line">        break; // Stops the switch</span>
+                <span class="code-line">    case 'B':</span>
+                <span class="code-line">    case 'C':</span>
+                <span class="code-line">        System.out.println("Good job!"); // Executes for 'B' or 'C'</span>
+                <span class="code-line">        break;</span>
+                <span class="code-line">    default:</span>
+                <span class="code-line">        System.out.println("Try harder."); // If no case matches</span>
+                <span class="code-line">}</span>
+                <span class="code-line">// Output: Good job!</span>
+            </div>
+        `,
+        footer: "Next: For Loop in Java"
+    },
+    'ForLoop': {
+        title: " For Loop: Iterating a Fixed Number of Times",
+        content: `
+            <p>The <strong>For Loop</strong> is typically used when you know exactly how many times you want to repeat a block of code.</p>
+            <h3>Structure: The Three Musketeers</h3>
+            <p>A for loop has three parts inside its parentheses, separated by semicolons:</p>
+            <ol>
+                <li><strong>Initialization:</strong> Runs once at the start (e.g., <code>int i = 0</code>).</li>
+                <li><strong>Condition:</strong> Checked before each iteration. If <code>false</code>, the loop ends (e.g., <code>i < 5</code>).</li>
+                <li><strong>Update:</strong> Runs after each iteration (e.g., <code>i++</code>).</li>
+            </ol>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">for (int i = 0; i < 3; i++) {</span>
+                <span class="code-line">    System.out.println("Iteration: " + i);</span>
+                <span class="code-line">}</span>
+                <span class="code-line">// Output:</span>
+                <span class="code-line">// Iteration: 0</span>
+                <span class="code-line">// Iteration: 1</span>
+                <span class="code-line">// Iteration: 2</span>
+            </div>
+        `,
+        footer: "Next: While/Do-While Loops"
+    },
+    'WhileDoWhile': {
+        title: " While/Do-While Loops: Condition First/Last",
+        content: `
+            <p><strong>While Loops</strong> repeat a block of code as long as a condition is true. The condition is checked **before** the loop runs.</p>
+            <p><strong>Do-While Loops</strong> are similar, but the code block is executed **at least once** because the condition is checked **after** the first iteration.</p>
+            <h3>Code Example: While Loop</h3>
+            <div class="code-block">
+                <span class="code-line">int count = 1;</span>
+                <span class="code-line">while (count <= 3) {</span>
+                <span class="code-line">    System.out.println("While: " + count);</span>
+                <span class="code-line">    count++;</span>
+                <span class="code-line">}</span>
+            </div>
+            <h3>Code Example: Do-While Loop (Guaranteed First Run)</h3>
+            <div class="code-block">
+                <span class="code-line">int value = 5;</span>
+                <span class="code-line">do {</span>
+                <span class="code-line">    System.out.println("Do-While: " + value);</span>
+                <span class="code-line">    value++;</span>
+                <span class="code-line">} while (value < 5); // Condition is false, but it still ran once!</span>
+            </div>
+        `,
+        footer: "Next: Types of Arrays"
+    },
+    'Arrays': {
+        title: " Types of Arrays: Storing Collections",
+        content: `
+            <p>An <strong>Array</strong> is an object that holds a fixed number of values of a single data type (e.g., a list of only integers, or only strings).</p>
+            <h3>One-Dimensional Array</h3>
+            <p>The simplest type, like a single row of boxes. You access elements using a single index (starting from 0).</p>
+            <div class="code-block">
+                <span class="code-line">// Declaration and initialization:</span>
+                <span class="code-line">int[] numbers = {10, 20, 30, 40};</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Accessing an element:</span>
+                <span class="code-line">int second = numbers[1]; // second will be 20</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Creating an array of size 5:</span>
+                <span class="code-line">String[] names = new String[5];</span>
+            </div>
+        `,
+        footer: "Next: Array and For-Each Loop"
+    },
+    'ForEachArray': {
+        title: " Array & For-Each Loop: Simplified Iteration",
+        content: `
+            <p>The <strong>For-Each Loop</strong> (also called the enhanced for loop) is specifically designed to iterate over all elements in an array (or a collection) without needing to manage the index counter.</p>
+            <h3>Syntax</h3>
+            <p><code>for (DataType elementVariable : arrayOrCollection) { // code to execute }</code></p>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">String[] heroes = {"Pikachu", "Mario", "Link"};</span>
+                <span class="code-line"></span>
+                <span class="code-line">for (String hero : heroes) {</span>
+                <span class="code-line">    System.out.println("Hero name: " + hero);</span>
+                <span class="code-line">}</span>
+                <span class="code-line">// Output:</span>
+                <span class="code-line">// Hero name: Pikachu</span>
+                <span class="code-line">// Hero name: Mario</span>
+                <span class="code-line">// Hero name: Link</span>
+            </div>
+            <p><strong>Note:</strong> You cannot modify the array elements directly using the for-each loop.</p>
+        `,
+        footer: "Next: Multidimensional Array"
+    },
+    'MultiArray': {
+        title: " Multidimensional Array: Tables of Data",
+        content: `
+            <p>A <strong>Multidimensional Array</strong> is essentially an array of arrays. The most common is the two-dimensional array, which can be visualized as a grid or a table (rows and columns).</p>
+            <h3>Two-Dimensional Array</h3>
+            <div class="code-block">
+                <span class="code-line">// A 2x3 array (2 rows, 3 columns)</span>
+                <span class="code-line">int[][] matrix = {</span>
+                <span class="code-line">    {1, 2, 3}, // Row 0</span>
+                <span class="code-line">    {4, 5, 6}  // Row 1</span>
+                <span class="code-line">};</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Accessing the element '5' (Row 1, Column 1)</span>
+                <span class="code-line">int element = matrix[1][1]; // element is 5</span>
+                <span class="code-line"></span>
+                <span class="code-line">// You need nested loops to iterate through all elements:</span>
+                <span class="code-line">for (int i = 0; i < 2; i++) {</span>
+                <span class="code-line">    for (int j = 0; j < 3; j++) {</span>
+                <span class="code-line">        System.out.print(matrix[i][j] + " ");</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+            </div>
+        `,
+        footer: "Next: Java Keywords"
+    },
+    'Keywords': {
+        title: " Java Keywords: The Reserved Words",
+        content: `
+            <p><strong>Java Keywords</strong> are reserved words that have a predefined meaning in the Java language. You cannot use them as names for variables, methods, classes, or any other identifier.</p>
+            <h3>A Few Essential Keywords:</h3>
+            <ul>
+                <li><strong>public:</strong> An access modifier.</li>
+                <li><strong>class:</strong> Used to declare a class.</li>
+                <li><strong>static:</strong> Used for a member that belongs to the class itself, not an instance.</li>
+                <li><strong>void:</strong> Indicates a method does not return a value.</li>
+                <li><strong>new:</strong> Used to create an object.</li>
+                <li><strong>this:</strong> Refers to the current object.</li>
+                <li><strong>extends:</strong> Used in inheritance.</li>
+            </ul>
+            <p>There are over 50 keywords, and recognizing them is key to understanding Java code structure!</p>
+        `,
+        footer: "Next: Scanner in Java"
+    },
+    'Scanner': {
+        title: "⌨ Scanner in Java: Taking User Input",
+        content: `
+            <p>The <strong>Scanner</strong> class is a utility provided in Java that allows you to read input from various sources, most commonly from the user via the console (terminal).</p>
+            <h3>Steps to Use Scanner</h3>
+            <ol>
+                <li><strong>Import:</strong> <code>import java.util.Scanner;</code></li>
+                <li><strong>Create:</strong> Create a Scanner object, usually attached to <code>System.in</code> (standard input).</li>
+                <li><strong>Use:</strong> Call one of its methods (e.g., <code>nextInt()</code>, <code>nextLine()</code>) to read data.</li>
+                <li><strong>Close:</strong> Close the scanner when you are done to release resources.</li>
+            </ol>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">import java.util.Scanner;</span>
+                <span class="code-line"></span>
+                <span class="code-line">public class InputDemo {</span>
+                <span class="code-line">    public static void main(String[] args) {</span>
+                <span class="code-line">        Scanner sc = new Scanner(System.in);</span>
+                <span class="code-line">        System.out.print("Enter your name: ");</span>
+                <span class="code-line">        String name = sc.nextLine();</span>
+                <span class="code-line">        System.out.println("Hello, " + name + "!");</span>
+                <span class="code-line">        sc.close();</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+            </div>
+        `,
+        footer: "Next: Type Casting"
+    },
+    'TypeCasting': {
+        title: " Type Casting: Changing Data Types",
+        content: `
+            <p><strong>Type Casting</strong> is when you convert a value from one data type to another. This is often necessary when a method expects a specific type.</p>
+            <h3>1. Widening/Implicit Casting (Automatic)</h3>
+            <p>Happens automatically when converting a smaller type to a larger type (e.g., <code>int</code> to <code>double</code>). No data loss occurs.</p>
+            <div class="code-block">
+                <span class="code-line">int myInt = 9;</span>
+                <span class="code-line">double myDouble = myInt; // Automatic casting (myDouble is 9.0)</span>
+            </div>
+            <h3>2. Narrowing/Explicit Casting (Manual)</h3>
+            <p>Must be done manually by placing the target type in parentheses (e.g., <code>double</code> to <code>int</code>). Potential for data loss (decimals are truncated).</p>
+            <div class="code-block">
+                <span class="code-line">double myDouble = 9.78;</span>
+                <span class="code-line">int myInt = (int) myDouble; // Manual casting (myInt is 9)</span>
+            </div>
+        `,
+        footer: "Next: Object-Oriented Programming (OOP)"
+    },
+    'OOP': {
+        title: " Object-Oriented Programming (OOP)",
+        content: `
+            <p>OOP is a programming paradigm based on the concept of <strong>Objects</strong>, which can contain data (fields/attributes) and code (methods/behaviors). The core pillars are:</p>
+            <ul>
+                <li><strong>Encapsulation:</strong> Bundling data and methods that operate on the data into a single unit (like a Class).</li>
+                <li><strong>Inheritance:</strong> Allowing a class to inherit properties and methods from another class (parent/child relationship).</li>
+                <li><strong>Polymorphism:</strong> The ability of an object to take on many forms (a single action, different ways).</li>
+                <li><strong>Abstraction:</strong> Hiding complex implementation details and showing only essential information.</li>
+            </ul>
+            <h3>The Class Blueprint</h3>
+            <div class="code-block">
+                <span class="code-line">public class Car { // The Class (The blueprint)</span>
+                <span class="code-line">    String color = "Red"; // Field/Attribute</span>
+                <span class="code-line">    public void drive() { // Method/Behavior</span>
+                <span class="code-line">        System.out.println("Vroom!");</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+                <span class="code-line"></span>
+                <span class="code-line">Car myCar = new Car(); // An Object (The instance)</span>
+                <span class="code-line">myCar.drive(); // Vroom!</span>
+            </div>
+        `,
+        footer: "Next: Access Modifiers"
+    },
+    'AccessModifier': {
+        title: " Access Modifiers: Controlling Visibility",
+        content: `
+            <p><strong>Access Modifiers</strong> control the level of accessibility (visibility) of a class, method, or variable. They are crucial for implementing **Encapsulation**.</p>
+            <h3>The Four Modifiers</h3>
+            <table style="width:100%; margin-top: 20px; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #4900A0;">
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Modifier</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Same Class</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Same Package</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Subclass (Different Package)</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Other Package</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>private</strong></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>default</strong> (no keyword)</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>protected</strong></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>public</strong></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 20px;">Use <code>private</code> for fields to hide them (Encapsulation) and <code>public</code> for methods that should be callable by everyone.</p>
+        `,
+        footer: "Next: Abstract Classes"
+    },
+    'Abstract': {
+        title: " Abstract: The Unfinished Blueprint",
+        content: `
+            <p>An <strong>Abstract Class</strong> is a restricted class that cannot be used to create objects directly (it's incomplete). It can contain both regular methods and <strong>abstract methods</strong> (methods declared without an implementation).</p>
+            <h3>Key Rules</h3>
+            <ul>
+                <li>To make a class or method abstract, use the <code>abstract</code> keyword.</li>
+                <li>If a class has an abstract method, the class **must** be declared abstract.</li>
+                <li>A non-abstract (concrete) class that inherits an abstract class **must** provide implementations for all of its abstract methods.</li>
+            </ul>
+            <div class="code-block">
+                <span class="code-line">// Abstract class cannot be instantiated</span>
+                <span class="code-line">abstract class Animal {</span>
+                <span class="code-line">    public abstract void makeSound(); // Abstract method (no body)</span>
+                <span class="code-line">    public void sleep() { // Regular method</span>
+                <span class="code-line">        System.out.println("Zzz...");</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Concrete class must implement makeSound()</span>
+                <span class="code-line">class Dog extends Animal {</span>
+                <span class="code-line">    public void makeSound() {</span>
+                <span class="code-line">        System.out.println("Woof!");</span>
+                <span class="code-line">    }</span>
+                <span class="code-line">}</span>
+            </div>
+        `,
+        footer: "Next: Arguments and Parameters"
+    },
+    'Arguments': {
+        title: " Arguments & Parameters: Passing Data",
+        content: `
+            <p>These terms are often used interchangeably, but in Java, they have distinct roles related to methods (or functions):</p>
+            <ul>
+                <li><strong>Parameter:</strong> The variable declared in the method signature (the placeholder).</li>
+                <li><strong>Argument:</strong> The actual value that is passed to the method when it is called (the data).</li>
+            </ul>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">// The method DEFINITION (defines the parameters)</span>
+                <span class="code-line">public static void printSum(int num1, int num2) { </span>
+                <span class="code-line">    // num1 and num2 are the **parameters**</span>
+                <span class="code-line">    System.out.println(num1 + num2);</span>
+                <span class="code-line">}</span>
+                <span class="code-line"></span>
+                <span class="code-line">// The method CALL (passes the arguments)</span>
+                <span class="code-line">printSum(10, 5); // 10 and 5 are the **arguments**</span>
+                <span class="code-line"></span>
+                <span class="code-line">int x = 20;</span>
+                <span class="code-line">printSum(x, 7); // x and 7 are the **arguments**</span>
+            </div>
+        `,
+        footer: "Next: OOP (Upcasting & Downcasting)"
+    },
+    'UpcastingDowncasting': {
+        title: " Upcasting & Downcasting: Polymorphism in Action",
+        content: `
+            <p>These are special types of Type Casting applied to objects, deeply tied to **Polymorphism** and **Inheritance**.</p>
+            <h3>Upcasting (Automatic)</h3>
+            <p>Casting a **subclass** object reference to a **superclass** reference. It's safe and done automatically because a subclass object *is-a* superclass object.</p>
+            <div class="code-block">
+                <span class="code-line">class Animal {}</span>
+                <span class="code-line">class Dog extends Animal {}</span>
+                <span class="code-line"></span>
+                <span class="code-line">Dog myDog = new Dog();</span>
+                <span class="code-line">Animal myAnimal = myDog; // Upcasting - Allowed!</span>
+            </div>
+            <h3>Downcasting (Explicit & Dangerous)</h3>
+            <p>Casting a **superclass** reference to a **subclass** reference. Must be done manually and can result in a <code>ClassCastException</code> if the object is not actually an instance of the subclass.</p>
+            <div class="code-block">
+                <span class="code-line">Animal myAnimal = new Dog(); // Upcasted reference</span>
+                <span class="code-line">Dog myOtherDog = (Dog) myAnimal; // Downcasting - Manual!</span>
+                <span class="code-line"></span>
+                <span class="code-line">// Check before Downcasting for safety:</span>
+                <span class="code-line">if (myAnimal instanceof Dog) {</span>
+                <span class="code-line">    Dog safeDog = (Dog) myAnimal;</span>
+                <span class="code-line">}</span>
+            </div>
+        `,
+        footer: "Congratulations, you've completed the Java Fundamentals!"
+    },
+    'Operators-Assignment': {
+        title: " Assignment Operators: Variable Shorthand",
+        content: `
+            <p>Assignment Operators are used to assign a value to a variable. The simple assignment operator is <code>=</code>.</p>
+            <p>The **Compound Assignment Operators** provide a shorthand way to perform an operation and assign the result back to the same variable.</p>
+            <h3>Compound Assignment Operators</h3>
+            <table style="width:100%; margin-top: 20px; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #4900A0;">
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Operator</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Example</th>
+                        <th style="padding: 10px; border: 1px solid #00bcd4;">Equivalent To</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>+=</strong></td><td><code>x += 5;</code></td><td><code>x = x + 5;</code></td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>-=</strong></td><td><code>x -= 3;</code></td><td><code>x = x - 3;</code></td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>*=</strong></td><td><code>x *= 4;</code></td><td><code>x = x * 4;</code></td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>/=</strong></td><td><code>x /= 2;</code></td><td><code>x = x / 2;</code></td></tr>
+                    <tr><td style="padding: 10px; border: 1px solid #00bcd4;"><strong>%=</strong></td><td><code>x %= 3;</code></td><td><code>x = x % 3;</code></td></tr>
+                </tbody>
+            </table>
+            <h3>Code Example</h3>
+            <div class="code-block">
+                <span class="code-line">int points = 10;</span>
+                <span class="code-line">points += 5; // points is now 15 (10 + 5)</span>
+                <span class="code-line">points /= 3; // points is now 5 (15 / 3)</span>
+            </div>
+        `,
+        footer: "Next: For Loop in Java"
+    },
+};
+
+function loadLesson(topic) {
+    const lesson = javaLessons[topic];
+    if (lesson) {
+        document.getElementById('lesson-title').textContent = lesson.title;
+        document.getElementById('lesson-content').innerHTML = lesson.content;
+        document.getElementById('lesson-footer').textContent = lesson.footer;
+        showSection('lessons'); // Switch to the lessons view
+        window.scrollTo(0, 0); // Scroll to the top of the page
+        byteSpeak(`You're now learning about ${lesson.title.replace(/<[^>]*>/g, '').replace(':', '')}!`);
+    } else {
+        document.getElementById('lesson-title').textContent = "Lesson Not Found ⚠️";
+        document.getElementById('lesson-content').innerHTML = "<p>Oops! The content for this lesson is still being coded. Check back later!</p>";
+        document.getElementById('lesson-footer').textContent = "Patience, young coder.";
+        showSection('lessons');
+        byteSpeak("Sorry, this lesson isn't ready. Go back to the menu to pick another one!");
+    }
+}
+
+
+// --- TRIVIA FUNCTIONS (Unchanged) ---
+const facts=[
+{ title:"Coding has over 700 languages", text:"There are over 700 coding languages worldwide — far more than the number of spoken languages in many countries!" },
+{ title:"Coding will soon be essential", text:"Coding and digital literacy are becoming everyday life skills, just like reading and writing." },
+{ title:"Ada Lovelace was the first programmer", text:"She created the first algorithm intended for a machine back in the 1800s!" },
+{ title:"First computer virus: Creeper", text:"The Creeper program from 1971 was the earliest self-replicating software — and it wasn’t even harmful." },
+{ title:"Coding can earn BIG money", text:"Programmers and data scientists earn some of the highest salaries worldwide — even students can earn early through freelancing!" },
+{ title:"Women pioneered programming", text:"The first digital computer (ENIAC) was programmed by six brilliant women." },
+{ title:"Coding improves your brain", text:"Learning to code enhances memory, problem-solving, and logical reasoning." },
+{ title:"Hello World!", text:"This simple phrase is the traditional first program learned by beginners." },
+{ title:"GitHub hosts millions of developers", text:"It is the world's largest hub for code collaboration and open-source projects." }
+];
+let currentIndex=0;
+const titleEl=document.getElementById("fact-title");
+const textEl=document.getElementById("fact-text");
+const card=document.getElementById("fact-card");
+function showFact(i){ card.style.transform="rotateY(90deg)"; setTimeout(()=>{ titleEl.textContent=facts[i].title; textEl.textContent=facts[i].text; card.style.transform="rotateY(0deg)"; },400);}
+document.getElementById("nextBtn").addEventListener("click",()=>{currentIndex++; if(currentIndex>=facts.length) currentIndex=0; showFact(currentIndex);});
+showFact(0);
+</script>
+</body>
+</html>
